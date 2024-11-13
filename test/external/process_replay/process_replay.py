@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # compare kernels created by HEAD against master
-import os, multiprocessing, logging, pickle, sqlite3, difflib, functools
+import os, multiprocessing, logging, pickle, sqlite3, difflib, functools, subprocess
 from typing import Callable, List, Tuple, Union, cast
 from tinygrad.helpers import VERSION, Context, ContextVar, colored, db_connection, getenv, tqdm
 from tinygrad.engine.schedule import full_ast_rewrite
@@ -19,6 +19,7 @@ TABLE_NAME = f"process_replay_{VERSION}"
 os.environ["RUN_PROCESS_REPLAY"] = "0"
 early_stop = multiprocessing.Event()
 logging.basicConfig(level=logging.INFO, format="%(message)s")
+COMMIT_HASH = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
 
 # user config
 ASSERT_DIFF = int((flag:="[pr]") in os.getenv("COMMIT_MESSAGE", flag) or flag in os.getenv("PR_TITLE", flag))
